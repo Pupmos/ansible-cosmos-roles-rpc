@@ -1,0 +1,59 @@
+---
+- name: Install packages
+  apt:
+    pkg:
+      - nginx
+
+- name: Copy nginx.conf
+  copy:
+    src: "{{ role_path }}/files/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+
+- name: Copy status.conf
+  copy:
+    src: "{{ role_path }}/files/status.conf"
+    dest: /etc/nginx/conf.d/status.conf
+    force: no
+
+- name: Delete default index
+  file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+
+- name: Copy index.html
+  copy:
+    src: "{{ role_path }}/files/index.html"
+    dest: /var/www/html/index.html
+    force: no
+
+- name: Copy api.conf
+  template:
+    src: api.conf.j2
+    dest: "/etc/nginx/sites-available/{{ api_hostname }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create API symlink
+  file:
+    src: "/etc/nginx/sites-available/{{ api_hostname }}"
+    dest: "/etc/nginx/sites-enabled/{{ api_hostname }}"
+    state: link
+
+- name: Copy rpc.conf
+  template:
+    src: rpc.conf.j2
+    dest: "/etc/nginx/sites-available/{{ rpc_hostname }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create RPC symlink
+  file:
+    src: "/etc/nginx/sites-available/{{ rpc_hostname }}"
+    dest: "/etc/nginx/sites-enabled/{{ rpc_hostname }}"
+    state: link
+
+- name: Restart nginx
+  command: echo "restarting nginx"
+  notify: "restart nginx"
