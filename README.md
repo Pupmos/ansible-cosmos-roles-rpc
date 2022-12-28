@@ -1,6 +1,6 @@
-# Ansible
+# Pupmos/ansible-cosmos-roles-rpc
 
-An ansible role for configuring a Cosmos full-node with public RPC/gRPC/API access.
+An Ansible role for configuring a Cosmos full-node with public RPC/gRPC/API access.
 
 ## Usage
 
